@@ -1,14 +1,17 @@
 ![banner](banner.png?raw=true)
 
+> Fork of [vinceliuice/grub2-themes](https://github.com/vinceliuice/grub2-themes) which has been tailored for the [Framework laptop](https://frame.work/). Adds a default `framework` screen size option and a custom minimalist default `framework` theme (see preview below).  All existing theme backgrounds also updated for Framework laptop resolution.  Includes fanart from [dev-boom/framework-fan-art](https://github.com/dev-boom/framework-fan-art)
+
+
 ## Installation:
 
 Usage:  `sudo ./install.sh [OPTIONS...]`
 
 ```
-  -t, --theme     theme variant(s)          [tela|vimix|stylish|whitesur]       (default is tela)
-  -i, --icon      icon variant(s)           [color|white|whitesur]              (default is color)
-  -s, --screen    screen display variant(s) [1080p|2k|4k|ultrawide|ultrawide2k] (default is 1080p)
-  -r, --remove    Remove theme              [tela|vimix|stylish|whitesur]       (must add theme name option, default is tela)
+  -t, --theme     theme variant(s)          [framework|tela|vimix|stylish|whitesur]       (default is framework)
+  -i, --icon      icon variant(s)           [color|white|whitesur]                        (default is color)
+  -s, --screen    screen display variant(s) [framework|1080p|2k|4k|ultrawide|ultrawide2k] (default is framework)
+  -r, --remove    Remove theme              [framework|tela|vimix|stylish|whitesur]       (must add theme name option, default is framework)
 
   -b, --boot      install theme into '/boot/grub' or '/boot/grub2'
   -g, --generate  do not install but generate theme into chosen directory       (must add your directory)
@@ -50,6 +53,7 @@ sudo ./install.sh -r -t tela
 
  - Make sure you have `imagemagick` installed, or at least something that provides `convert`
  - Find the resolution of your display, and make sure your background matches the resolution
+   - 2256x1504 >> framework
    - 1920x1080 >> 1080p
    - 2560x1080 >> ultrawide
    - 2560x1440 >> 2k

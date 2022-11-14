@@ -24,6 +24,7 @@
             "2k" = "2560x1440";
             "4k" = "3840x2160";
             "ultrawide2k" = "3440x1440";
+            "framework" = "2256x1504";
           };
           grub2-theme = pkgs.stdenv.mkDerivation {
             name = "grub2-theme";
@@ -58,9 +59,9 @@
                 '';
               };
               theme = mkOption {
-                default = "tela";
+                default = "framework";
                 example = "tela";
-                type = types.enum [ "tela" "vimix" "stylish" "whitesur" ];
+                type = types.enum [ "tela" "vimix" "stylish" "whitesur" "framework" ];
                 description = ''
                   The theme to use for grub2.
                 '';
@@ -74,9 +75,9 @@
                 '';
               };
               screen = mkOption {
-                default = "1080p";
+                default = "framework";
                 example = "1080p";
-                type = types.enum [ "1080p" "2k" "4k" "ultrawide" "ultrawide2k" ];
+                type = types.enum [ "1080p" "2k" "4k" "ultrawide" "ultrawide2k" "framework" ];
                 description = ''
                   The screen resolution to use for grub2.
                 '';

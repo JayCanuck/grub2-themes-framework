@@ -11,9 +11,9 @@ tui_root_login=
 THEME_DIR="/usr/share/grub/themes"
 REO_DIR="$(cd $(dirname $0) && pwd)"
 
-THEME_VARIANTS=('tela' 'vimix' 'stylish' 'whitesur')
+THEME_VARIANTS=('tela' 'vimix' 'stylish' 'whitesur' 'framework')
 ICON_VARIANTS=('color' 'white' 'whitesur')
-SCREEN_VARIANTS=('1080p' '2k' '4k' 'ultrawide' 'ultrawide2k')
+SCREEN_VARIANTS=('1080p' '2k' '4k' 'ultrawide' 'ultrawide2k' 'framework')
 
 #################################
 #   :::::: C O L O R S ::::::   #
@@ -62,10 +62,10 @@ cat << EOF
 Usage: $0 [OPTION]...
 
 OPTIONS:
-  -t, --theme     theme variant(s)          [tela|vimix|stylish|whitesur]       (default is tela)
-  -i, --icon      icon variant(s)           [color|white|whitesur]              (default is color)
-  -s, --screen    screen display variant(s) [1080p|2k|4k|ultrawide|ultrawide2k] (default is 1080p)
-  -r, --remove    Remove theme              [tela|vimix|stylish|whitesur]       (must add theme name option, default is tela)
+  -t, --theme     theme variant(s)          [framework|tela|vimix|stylish|whitesur]       (default is framework)
+  -i, --icon      icon variant(s)           [color|white|whitesur]                        (default is color)
+  -s, --screen    screen display variant(s) [framework|1080p|2k|4k|ultrawide|ultrawide2k] (default is framework)
+  -r, --remove    Remove theme              [framework|tela|vimix|stylish|whitesur]       (must add theme name option, default is framework)
 
   -b, --boot      install theme into '/boot/grub' or '/boot/grub2'
   -g, --generate  do not install but generate theme into chosen directory       (must add your directory)
@@ -113,6 +113,10 @@ generate() {
     cp -a --no-preserve=ownership "${REO_DIR}/assets/assets-${icon}/icons-2k" "${THEME_DIR}/${theme}/icons"
     cp -a --no-preserve=ownership "${REO_DIR}/assets/assets-select/select-2k/"*.png "${THEME_DIR}/${theme}"
     cp -a --no-preserve=ownership "${REO_DIR}/assets/info-2k.png" "${THEME_DIR}/${theme}/info.png"
+  elif [[ ${screen} == 'framework' ]]; then
+    cp -a --no-preserve=ownership "${REO_DIR}/assets/assets-${icon}/icons-4k" "${THEME_DIR}/${theme}/icons"
+    cp -a --no-preserve=ownership "${REO_DIR}/assets/assets-select/select-4k/"*.png "${THEME_DIR}/${theme}"
+    cp -a --no-preserve=ownership "${REO_DIR}/assets/info-4k.png" "${THEME_DIR}/${theme}/info.png"
   else
     cp -a --no-preserve=ownership "${REO_DIR}/assets/assets-${icon}/icons-${screen}" "${THEME_DIR}/${theme}/icons"
     cp -a --no-preserve=ownership "${REO_DIR}/assets/assets-select/select-${screen}/"*.png "${THEME_DIR}/${theme}"
@@ -179,6 +183,8 @@ install() {
       gfxmode="GRUB_GFXMODE=2560x1440,auto"
     elif [[ ${screen} == 'ultrawide2k' ]]; then
       gfxmode="GRUB_GFXMODE=3440x1440,auto"
+    elif [[ ${screen} == 'framework' ]]; then
+      gfxmode="GRUB_GFXMODE=2256x1504,auto"
     fi
 
     if grep "GRUB_GFXMODE=" /etc/default/grub 2>&1 >/dev/null; then
@@ -280,14 +286,16 @@ run_dialog() {
     tui=$(dialog --backtitle ${Project_Name} \
     --radiolist "Choose your Grub theme background picture : " 15 40 5 \
       1 "Vimix Theme" off  \
-      2 "Tela Theme" on \
+      2 "Tela Theme" off \
       3 "Stylish Theme" off  \
-      4 "WhiteSur Theme" off --output-fd 1 )
+      4 "WhiteSur Theme" off \
+      5 "Framework Theme" on --output-fd 1 )
       case "$tui" in
         1) theme="vimix"      ;;
         2) theme="tela"       ;;
         3) theme="stylish"    ;;
         4) theme="whitesur"   ;;
+        5) theme="framework"  ;;
         *) operation_canceled ;;
      esac
 
@@ -305,17 +313,19 @@ run_dialog() {
 
     tui=$(dialog --backtitle ${Project_Name} \
     --radiolist "Choose your Display Resolution : " 15 40 5 \
-      1 "1080p (1920x1080)" on  \
+      1 "1080p (1920x1080)" off  \
       2 "1080p ultrawide (2560x1080)" off  \
       3 "2k (2560x1440)" off \
       4 "4k (3840x2160)" off \
-      5 "1440p ultrawide (3440x1440)" off --output-fd 1 )
+      5 "1440p ultrawide (3440x1440)" off \
+      6 "Framework Laptop (2256x1504)" on --output-fd 1 )
       case "$tui" in
         1) screen="1080p"       ;;
         2) screen="ultrawide"   ;;
         3) screen="2k"          ;;
         4) screen="4k"          ;;
         5) screen="ultrawide2k" ;;
+        6) screen="framework"   ;;
         *) operation_canceled   ;;
      esac
   fi
@@ -505,6 +515,10 @@ while [[ $# -gt 0 ]]; do
             themes+=("${THEME_VARIANTS[3]}")
             shift
             ;;
+          framework)
+            themes+=("${THEME_VARIANTS[4]}")
+            shift
+            ;;
           -*)
             break
             ;;
@@ -544,6 +558,10 @@ while [[ $# -gt 0 ]]; do
             ;;
           whitesur)
             themes+=("${THEME_VARIANTS[3]}")
+            shift
+            ;;
+          framework)
+            themes+=("${THEME_VARIANTS[4]}")
             shift
             ;;
           -*)
@@ -608,6 +626,10 @@ while [[ $# -gt 0 ]]; do
             screens+=("${SCREEN_VARIANTS[4]}")
             shift
             ;;
+          framework)
+            screens+=("${SCREEN_VARIANTS[5]}")
+            shift
+            ;;
           -*)
             break
             ;;
@@ -638,15 +660,15 @@ done
 # Show terminal user interface for better use
 if [[ "${dialog:-}" == 'false' ]]; then
   if [[ "${remove:-}" != 'true' ]]; then
-    for theme in "${themes[@]-${THEME_VARIANTS[0]}}"; do
+    for theme in "${themes[@]-${THEME_VARIANTS[4]}}"; do
       for icon in "${icons[@]-${ICON_VARIANTS[0]}}"; do
-        for screen in "${screens[@]-${SCREEN_VARIANTS[0]}}"; do
+        for screen in "${screens[@]-${SCREEN_VARIANTS[5]}}"; do
           $install "${theme}" "${icon}" "${screen}"
         done
       done
     done
   elif [[ "${remove:-}" == 'true' ]]; then
-    for theme in "${themes[@]-${THEME_VARIANTS[0]}}"; do
+    for theme in "${themes[@]-${THEME_VARIANTS[4]}}"; do
       remove "${theme}"
     done
   fi
